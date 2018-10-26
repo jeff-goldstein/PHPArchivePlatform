@@ -20,7 +20,7 @@ function S3upload ($fileName, $fileContent)
     try 
     {
 	    $client->putObject(array(
-        'Bucket'=>'jeff-archiver',
+        'Bucket'=>$config['s3']['bucket'],
         'Key' =>  "{$fileName}",
         'Body' => $fileContent,
         'StorageClass' => 'REDUCED_REDUNDANCY',
