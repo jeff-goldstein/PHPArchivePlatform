@@ -1,0 +1,18 @@
+<?php
+
+return [
+'s3' => [
+	'key' => '<s3 Access key id>',
+	'secret' => '<Secrit access key>',
+	'bucket' => 'jeff-archiver'],
+'archive' => [
+	'ArchiveDirectory' => 'uploads',
+	'ArchiveLogName' => 'Archivelog.txt',
+	'MaxArchiveLogSize' => '15000000',
+	'DefaultTimeZone' => 'America/Los_Angeles'],
+'mysql' => [
+	'servername' => 'localhost',
+	'username' => '<mysql username>',
+	'password' => '<mysql password>']
+];
+?>
