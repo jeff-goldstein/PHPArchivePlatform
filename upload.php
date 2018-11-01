@@ -18,7 +18,7 @@ function get_important_headers($headers, &$original_to, &$headerDate, &$subject,
 }
 
 
-function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$headerDate, &$subject, &$from, &$sendDateTime)
+function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$headerDate, &$subject, &$from, &$sendDateTime, &$transmissionID)
 {
     $servertimestamp = NULL; $AuthfromServer = NULL;
     if ($verb == "POST") 
@@ -36,6 +36,7 @@ function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$h
         $friendly_from = $fields['0']['msys']['relay_message']['friendly_from'];
         $subject = $fields['0']['msys']['relay_message']['content']['subject'];
         $headers = $fields['0']['msys']['relay_message']['content']['headers'];
+        $transmissionID = $fields['0']['msys']['relay_message']['content']['transmissionID'];
         $fileContent = $fields['0']['msys']['relay_message']['content']['email_rfc822'];
 
         get_important_headers($headers, $original_to, $headerDate, $subject, $from);
@@ -79,9 +80,9 @@ $DefaultTimeZone = $config['archive']['DefaultTimeZone'];
 $servername = $config['mysql']['servername'];
 $username = $config['mysql']['username'];
 $password = $config['mysql']['password'];
-$fileName = $ArchiveDirectory . '/' . md5(uniqid(rand(), true)) . '.eml';
 
-extract_data($verb, $fileContent, $DefaultTimeZone, $original_to, $headerDate, $subject, $from, $sendDateTime);
+extract_data($verb, $fileContent, $DefaultTimeZone, $original_to, $headerDate, $subject, $from, $sendDateTime, $transmissionID);
+$fileName = $ArchiveDirectory . '/' . $transmissionID . '.eml';
 S3upload ($fileName, $fileContent);
 MySQLlog ($original_to, $headerDate, $subject, $from, $fileName, $ArchiveTextLog, $sendDateTime, $servername, $username, $password);
 
