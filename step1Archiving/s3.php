@@ -1,4 +1,7 @@
 <?php
+// File: s3.php
+// Purpose: Store the rfc822 archive of copy of an email
+// Called by upload.php (will be included into upload.php)
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 
