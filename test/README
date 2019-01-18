@@ -1,0 +1,18 @@
+The email test harnes is a simple command line application that sends 'x' number of emails; depending on what you set in the for loop
+on line 3.  This will allow you to do simple testing or even stress testing if you wish.  For high volume stress testing, you will
+probably want to run this command in parallel in order to get the throughput you expect.
+
+It will then:
+
+  1) Randomly pick an email to send 
+  2) Update the email with an UID that will tie the original email to the archive
+  3) Pull in the SWAK command line template and update it with the same UID
+  4) Send the email
+  
+The only three configurations that you will need are:
+
+  1) You will need SWAKS installed and change the harnes code to point to your SWAKS installation.  
+  2) You will also need to update the harness code with a SparkPost API key with SMTP rights.
+  3) Set line three to reflect the number of emails you want to send.
+
+Once everything is installed, simply call the harnes code 'emailtestharnes.php' from the command line and watch your code at work.
