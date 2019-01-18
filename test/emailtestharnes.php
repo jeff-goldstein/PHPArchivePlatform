@@ -13,7 +13,7 @@ for ($i=1; $i<20; $i++)
       $campaignID = "Welcome";
       break;
     case 2: 
-      $emailbody = file_get_contents("emailbodylong.html");
+      $emailbody = file_get_contents("sparkpostnewsletter.html");
       $emailbody = str_replace("<randomcode>", $randomuid, $emailbody);
       $subject = "SparkPost Monthly Newletter";
       $campaignID = "Newletter";
