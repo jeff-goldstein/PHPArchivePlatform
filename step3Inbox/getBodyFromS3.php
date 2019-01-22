@@ -29,7 +29,7 @@ try
 catch (S3Exception $e) 
 {
     // Catch an S3 specific exception.
-    echo "proof baby: ";
+    echo "error: ";
     echo $e->getMessage();
 }
 fclose($FileHandle);
