@@ -12,10 +12,13 @@ Here is a summary of the blog posts and supporting code:
 1) Describe problem and solution
 2) Create and store archive email along with reference data in SQL table (see step1Archiving folder for corresponding code)
 3) Store all log data about archive and original email into SQL table (see step2StoringEvents folder for corresponding code)
+4) Create an inbox UI to see the email and all associated events
 
 I have created new folders that represent each step in the process.  Those folders represent the culmination of code up to that point of the blog/code series, not just the differences. This allows you to easily match the code with how much functionality you want to use.
 
-As for installation, steps 1 and 2 can simply be dropped into a directory and run since there is not UI interphase.  Yes, you will need the appropriate libraries for S3 and MySQL, but other than that, installation is fairly straight forward.  Of course, if the location of your libraries are different that what I used, you need to update the locations I have within the code.
+As for installation, steps 1 and 2 can simply be dropped into a directory and run since there is no UI interphase.  Yes, you will need the appropriate libraries for S3 and MySQL, but other than that, installation is fairly straight forward.  Of course, if the location of your libraries are different that what I used, you need to update the locations I have within the code.
+
+In step 3, I have a UI so if you have a different location for UI code, than processing code, you will have to change any file calls to the appropriate locations.
 
 I have leveraged a config.php file as a location for flag settings, locations and username/password settings; you will need to set those appropriately as well.
 
