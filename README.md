@@ -20,7 +20,16 @@ As for installation, steps 1 and 2 can simply be dropped into a directory and ru
 
 In step 3, I have a UI so if you have a different location for UI code, than processing code, you will have to change any file calls to the appropriate locations.
 
-I have leveraged a config.php file as a location for flag settings, locations and username/password settings; you will need to set those appropriately as well.
+Step 4 added reporting.
+
+Here are the blogs to each step:
+https://www.sparkpost.com/blog/building-email-archiving-system-challenges-course-solution/
+https://www.sparkpost.com/blog/building-an-email-archiving-system-storing-the-email-body-part-2-of-4/
+https://www.sparkpost.com/blog/building-email-archiving-system-storing-email-log-data-part-3-4/
+https://www.sparkpost.com/blog/building-an-email-archiving-system-searching-and-displaying-the-data-part-4/
+https://www.sparkpost.com/blog/building-email-archiving-system-reporting-part-5/
+
+Also, please note that I have leveraged a config.php file as a location for flag settings, locations and username/password settings; you will need to set those appropriately as well.
 
 Happy Sending,
 Jeff
