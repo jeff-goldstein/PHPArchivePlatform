@@ -25,6 +25,9 @@ return [
 'reporting' => [
 	'Directory' => 'csvtempStore',
 	'BuiltHTMLTempStore' => 'htmltempStore',
-	'Base' => 'AuditCSV']
+	'Base' => 'AuditCSV'],
+	,
+'secret' => [
+    'secret' => 'SomeCreatedAuthTokenToUse']
 ];
 ?>
