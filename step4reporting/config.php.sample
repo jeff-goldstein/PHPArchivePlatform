@@ -28,6 +28,8 @@ return [
 	'Base' => 'AuditCSV'],
 	,
 'secret' => [
-    'secret' => 'SomeCreatedAuthTokenToUse']
+    'secret' => 'SomeCreatedAuthTokenToUse'],
+'hiddenID' => [
+    'inputField' => 'ArchiveCode']
 ];
 ?>
