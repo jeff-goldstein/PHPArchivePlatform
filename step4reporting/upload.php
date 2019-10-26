@@ -18,9 +18,9 @@ function get_important_headers($headers, &$original_to, &$headerDate, &$subject,
 }
 
 
-function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$headerDate, &$subject, &$from, &$sendDateTime, $inputField, &$UID, &$html, &$headerstring)
+function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$headerDate, &$subject, &$from, &$sendDateTime, $inputField, &$UID, &$html, &$headerstring, $simplecheck, &$skip)
 {
-    $servertimestamp = NULL; $AuthfromServer = NULL;
+    $servertimestamp = NULL; $AuthfromServer = NULL; $skip="YES";
     if ($verb == "POST") 
     {
         $original_to = NULL; $headerDate = NULL;
@@ -31,21 +31,50 @@ function extract_data($verb, &$fileContent, $DefaultTimeZone, &$original_to, &$h
         $sendDateTime = ($previewTimestamp["tm_year"] + 1900) . "." . $monthName . "." . $previewTimestamp["tm_mday"] . "." . $previewTimestamp["tm_hour"] . "." . $previewTimestamp["tm_min"] . "." . $previewTimestamp["tm_sec"];
 
         $body = file_get_contents("php://input");
-        $fields = json_decode($body, true);
-        $rcpt_to = $fields['0']['msys']['relay_message']['rcpt_to'];
-        $friendly_from = $fields['0']['msys']['relay_message']['friendly_from'];
-        $subject = $fields['0']['msys']['relay_message']['content']['subject'];
-        $headers = $fields['0']['msys']['relay_message']['content']['headers'];
-        $headerstring = json_encode($headers);
-        $html = $fields['0']['msys']['relay_message']['content']['html'];
-        $fileContent = $fields['0']['msys']['relay_message']['content']['email_rfc822'];
-        $start = strpos($html, $inputField);
-        $start = strpos($html, "value=", $start) + 7;
-        $end = strpos($html, ">", $start) - 1;
-        $length = $end - $start;
-        $UID = substr($html, $start, $length);
-        //file_put_contents("uploadheaders.txt", $headerstring);
-        get_important_headers($headers, $original_to, $headerDate, $subject, $from);
+        $headerStringValue = $_SERVER['HTTP_X_API_KEY'];
+        // Very Very simple check
+        if ($headerStringValue == $simplecheck)
+        {
+            $skip="NO";
+            $fields = json_decode($body, true);
+            $rcpt_to = $fields['0']['msys']['relay_message']['rcpt_to'];
+            $friendly_from = $fields['0']['msys']['relay_message']['friendly_from'];
+            $subject = $fields['0']['msys']['relay_message']['content']['subject'];
+            $headers = $fields['0']['msys']['relay_message']['content']['headers'];
+            $headerstring = json_encode($headers);
+            $html = $fields['0']['msys']['relay_message']['content']['html'];
+            $fileContent = $fields['0']['msys']['relay_message']['content']['email_rfc822'];
+            $start = strpos($html, $inputField);
+            if ($start!=0)
+            {
+                $start = strpos($html, "value=", $start) + 7;
+                $end = strpos($html, ">", $start) - 1;
+                $length = $end - $start;
+                $UID = substr($html, $start, $length);
+                file_put_contents("uploadheaders.txt", $headerstring);
+                get_important_headers($headers, $original_to, $headerDate, $subject, $from);
+            }
+            else
+            {
+                $errorText = "\n*******\n\tRcpt To: " . $rcpt_to;
+                $errorText .= "\n\tSubject: " . $subject;
+                $errorText .= "\n\tHeaders: " . $headerstring;
+                $errorText .= "\n\tSend Date Time: " . $sendDateTime;
+                file_put_contents("SkipThisEmailBecauseNoArchiveValueFound.txt", $errorText, FILE_APPEND);
+                $skip="YES";
+            }
+        }
+        else
+        {
+            $rcpt_to = $fields['0']['msys']['relay_message']['rcpt_to'];
+            $subject = $fields['0']['msys']['relay_message']['content']['subject'];
+            $headers = $fields['0']['msys']['relay_message']['content']['headers'];
+            $errorText = "\n*******\n\tRcpt To: " . $rcpt_to;
+            $errorText .= "\n\tSubject: " . $subject;
+            $errorText .= "\n\tHeaders: " . $headerstring;
+            $errorText .= "\n\tSend Date Time: " . $sendDateTime;
+            file_put_contents("SkipThisEmailBecauseMissingSecurityHeader.txt", $errorText, FILE_APPEND);
+        }
     }
 }
 
@@ -78,8 +107,7 @@ function MYSQLLog ($original_to, $headerDate, $subject, $from, $ArchiveDirectory
 
     
 // Main Body - Sort of
-$verb = $_SERVER['REQUEST_METHOD']; 
-        
+$verb = $_SERVER['REQUEST_METHOD'];
 $ArchiveDirectory = $config['archive']['ArchiveDirectory']; 
 $ArchiveTextLog = $config['archive']['ArchiveLogName'];
 $DefaultTimeZone = $config['archive']['DefaultTimeZone'];
@@ -87,10 +115,14 @@ $servername = $config['mysql']['servername'];
 $username = $config['mysql']['username'];
 $password = $config['mysql']['password'];
 $inputField = $config['hiddenID']['inputField'];
+$simplecheck = $config['secret']['secret'];
 
-extract_data($verb, $fileContent, $DefaultTimeZone, $original_to, $headerDate, $subject, $from, $sendDateTime, $inputField, $UID, $html, $headerstring);
-$fileName = $ArchiveDirectory . '/' . $UID . '.eml';
-S3upload ($fileName, $fileContent, $html);
-MySQLlog ($original_to, $headerDate, $subject, $from, $ArchiveDirectory, $UID,  $ArchiveTextLog, $sendDateTime, $servername, $username, $password, $headerstring);
+extract_data($verb, $fileContent, $DefaultTimeZone, $original_to, $headerDate, $subject, $from, $sendDateTime, $inputField, $UID, $html, $headerstring, $simplecheck, $skip);
+if ($skip == "NO")
+{
+    $fileName = $ArchiveDirectory . '/' . $UID . '.eml';
+    S3upload ($fileName, $fileContent, $html);
+    MySQLlog ($original_to, $headerDate, $subject, $from, $ArchiveDirectory, $UID,  $ArchiveTextLog, $sendDateTime, $servername, $username, $password, $headerstring);
+}
 
 ?>
