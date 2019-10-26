@@ -33,3 +33,8 @@ Also, please note that I have leveraged a config.php file as a location for flag
 
 Happy Sending,
 Jeff
+
+
+Update on Oct 25, 2019 (added only to the Step 4 folder)
+o Don't store the email if there is no 'archive' id in the email body. This probably means that an email came into the system that was not part of the 'archive' process.
+o Simple security check against a headers value.
